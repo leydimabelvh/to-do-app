@@ -17,13 +17,21 @@ const state = {
 }
 
 const initStore = () => {
-    console.log(state);
-    // console.log(Filters);
+    loadStore();
     console.log('Init Store 😀');
 }
 
 const loadStore = () => {
-    throw new Error('Not implemented');
+    if ( !localStorage.getItem('state') ) return;
+
+    const { taskList = [], filter = Filters.All } = JSON.parse( localStorage.getItem( 'state' ) );
+   
+    state.taskList = taskList;
+    state.filter = filter;
+}
+
+const saveStateToLocalStorage = () => {
+    localStorage.setItem( 'state', JSON.stringify( state ) );
 }
 
 const getTaskList = ( filter = Filters.All ) => {
@@ -47,6 +55,8 @@ const addTask = ( description ) => {
     if ( !description ) throw new Error('Description is required.');
 
     state.taskList.push( new Task(description) );
+
+    saveStateToLocalStorage();
 }
 
 /**
@@ -61,7 +71,7 @@ const toggleTask = ( taskId ) => {
         return task;
     } );
 
-    
+    saveStateToLocalStorage()
 }
 
 /**
@@ -70,10 +80,14 @@ const toggleTask = ( taskId ) => {
  */
 const deleteTask = ( taskId ) => {
     state.taskList = state.taskList.filter( task => task.id != taskId );
+
+    saveStateToLocalStorage();
 }
 
 const deleteCompleted = () => {
     state.taskList = state.taskList.filter( task => task.done );
+
+    saveStateToLocalStorage();
 }    
 
 /**
@@ -82,6 +96,8 @@ const deleteCompleted = () => {
  */
 const setSelectedFilter = ( newFilter = Filters.All ) => {
     state.filter = newFilter;
+
+    saveStateToLocalStorage();
 }
 
 const getCurrentFilter = () => {
@@ -96,6 +112,7 @@ export default {
     getTaskList,
     initStore,
     loadStore,
+    saveStateToLocalStorage,
     setSelectedFilter,
     toggleTask,
 }

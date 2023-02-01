@@ -22,5 +22,5 @@ export const renderTaskList = ( elementId, taskList = [] ) => {
         element.append( createTaskHTML(task) );
     });
 
-    console.log(element,taskList);
+    // console.log(element,taskList);
 }
