@@ -1,6 +1,6 @@
 import taskStore, { Filters } from '../store/task.store';
 import htmlCode from './app.component.html?raw';
-import { renderTaskList } from './use-cases';
+import { renderPendingTaskList, renderTaskList } from './use-cases';
 
 
 const ElementIDs = {
@@ -8,6 +8,7 @@ const ElementIDs = {
     TaskListing: '.task-listing',
     NewTaskInput: '#new-task-input',
     TaskFilterList: '.filters',
+    PendingCount: "#pending-count",
 }
 
 /**
@@ -20,7 +21,13 @@ export const App = ( elementId ) => {
     const displayTaskList = () => {
         const taskList = taskStore.getTaskList( taskStore.getCurrentFilter() );
         renderTaskList( ElementIDs.TaskListing, taskList );
+        updatePendingCount();
     }
+
+    const updatePendingCount = () => {
+        const taskList = taskStore.getTaskList( Filters.Pending );      
+        renderPendingTaskList( ElementIDs.PendingCount, taskList.length );
+    };
 
     // Cuando la función App() se llama.
     (() => {

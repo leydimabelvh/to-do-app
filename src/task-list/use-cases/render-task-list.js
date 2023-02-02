@@ -14,7 +14,7 @@ export const renderTaskList = ( elementId, taskList = [] ) => {
         element = document.querySelector( elementId );
 
     if ( !element )
-        throw new Error( `Element ${ elementId } not found.`  )
+        throw new Error( `Element ${ elementId } not found.` );
     
     element.innerHTML = '';
 
