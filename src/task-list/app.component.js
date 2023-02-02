@@ -1,11 +1,13 @@
-import taskStore from '../store/task.store';
+import taskStore, { Filters } from '../store/task.store';
 import htmlCode from './app.component.html?raw';
 import { renderTaskList } from './use-cases';
 
 
 const ElementIDs = {
+    ClearCompleted: '.clear-completed',
     TaskListing: '.task-listing',
     NewTaskInput: '#new-task-input',
+    TaskFilterList: '.filters',
 }
 
 /**
@@ -14,15 +16,14 @@ const ElementIDs = {
  */
 
 export const App = ( elementId ) => {
+
     const displayTaskList = () => {
         const taskList = taskStore.getTaskList( taskStore.getCurrentFilter() );
         renderTaskList( ElementIDs.TaskListing, taskList );
     }
 
-
     // Cuando la función App() se llama.
     (() => {
-        // document.querySelector(elementId).append(document.createElement('div').innerHTML = '<h2>Hola</h2>');
         const app = document.createElement('div');
         app.innerHTML = htmlCode;
         document.querySelector(elementId).append(app);
@@ -32,9 +33,11 @@ export const App = ( elementId ) => {
     // Referencias HTML
     const newDescriptionInput =  document.querySelector( ElementIDs.NewTaskInput );
     const taskListUL = document.querySelector( ElementIDs.TaskListing );
+    const clearCompletedButton = document.querySelector( ElementIDs.ClearCompleted );
+    const taskFilterListUL = document.querySelector( ElementIDs.TaskFilterList );
 
     //Listeners
-    newDescriptionInput.addEventListener( 'keyup', (event) => {
+    newDescriptionInput.addEventListener( 'keyup', ( event ) => {
         if ( event.keyCode !== 13 ) return; 
         if ( event.target.value.trim().length === 0 ) return;
 
@@ -43,22 +46,13 @@ export const App = ( elementId ) => {
         event.target.value = '';
     } );
 
-    taskListUL.addEventListener( 'click', (event) => {
+    taskListUL.addEventListener( 'click', ( event ) => {
         const parentElement = event.target.closest('[data-id]');
         taskStore.toggleTask( parentElement.getAttribute('data-id') );
         displayTaskList();
     } );
-    
-    // taskListUL.addEventListener( 'click', (event) => {
-    //     if ( event.target.matches('.destroy') )  {
-    //         const parentElement = event.target.closest('[data-id]');
-    //         taskStore.deleteTask( parentElement.getAttribute('data-id') );
-    //         displayTaskList();
-    //     }
-    //     return;
-    // });
 
-    taskListUL.addEventListener( 'click', (event) => {
+    taskListUL.addEventListener( 'click', ( event ) => {
         const isDestroy = event.target.matches('.destroy');
         const parentElement = event.target.closest('[data-id]');
 
@@ -66,11 +60,48 @@ export const App = ( elementId ) => {
 
         taskStore.deleteTask( parentElement.getAttribute('data-id') );
         displayTaskList();  ;
-    });
+    } );
 
-  
+    clearCompletedButton.addEventListener( 'click', ( event ) => {
+        const isClearCompleted = event.target.matches( ElementIDs.ClearCompleted );
+        if ( !isClearCompleted ) return;
+        
+        taskStore.deleteCompleted();
+        displayTaskList();
+    } );
 
+    taskFilterListUL.addEventListener( 'click', ( event ) => {
 
+        const isFilter = event.target.matches( '.filter' );
+        const isSelected = event.target.matches( '.selected' );
 
+        if ( !isFilter ) return;
+        if ( isSelected ) return;
+
+        const elementSelected = document.querySelector( '.selected' );
+        elementSelected.classList.remove( 'selected' );
+        
+        const element = event.target;
+        element.classList.add( 'selected' );
+
+        const filter = element.innerText;
+
+        switch (filter) {
+            case 'Todos':
+                taskStore.setSelectedFilter(Filters.All);
+                break;
+            case 'Pendientes':
+                taskStore.setSelectedFilter(Filters.Pending);
+                break;
+            case 'Completados':
+                taskStore.setSelectedFilter(Filters.Completed);
+                break;        
+            default:
+                throw new Error( `Filter ${filter} is not valid.` );
+        }
+
+        displayTaskList();
+
+    } );    
 
 }

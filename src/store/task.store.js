@@ -1,6 +1,6 @@
 import { Task } from '../task-list/models/task.model';
 
-const Filters = {
+export const Filters = {
     All: 'All',
     Completed: 'Completed',
     Pending: 'Pending'
@@ -40,7 +40,7 @@ const getTaskList = ( filter = Filters.All ) => {
             return [...state.taskList];
         case Filters.Completed:
             return state.taskList.filter( task => task.done );
-            case Filters.Pending:
+        case Filters.Pending:
             return state.taskList.filter( task => !task.done );
         default:
             throw new Error(`Option ${ filter } is not valid.`);
@@ -85,7 +85,7 @@ const deleteTask = ( taskId ) => {
 }
 
 const deleteCompleted = () => {
-    state.taskList = state.taskList.filter( task => task.done );
+    state.taskList = state.taskList.filter( task => !task.done );
 
     saveStateToLocalStorage();
 }    
