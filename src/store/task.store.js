@@ -8,10 +8,11 @@ export const Filters = {
 
 const state = {
     taskList: [
-        new Task('Homework 1'),
-        new Task('Homework 2'),
-        new Task('Homework 3'),
-        new Task('Homework 4'),
+        new Task('Terminar el maquetado de la página web.'),
+        new Task('Implementar pruebas unitarias en el código de la web.'),
+        new Task('Configurar el servidor para desplegar la web en linea.'),
+        new Task('Comprar el dominio y el cifrado SSL para la página web.'),
+        new Task('Generar reportes sobre métricas de rendimiento de la web.'),
     ],
     filter: Filters.All,
 }
